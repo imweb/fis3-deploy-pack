@@ -2,10 +2,11 @@
 
 var path = require('path'),
     fs = require('fs'),
+    rimraf = require('rimraf'),
     archiver = require('archiver'); 
 
 var entry = module.exports = function(opts, modified, total, next) {
-    fis.util.del(opts.to);
+    rimraf.sync(projectPath(opts.tmp));
 
     total.filter(function(file) {
         return (opts.packDomain && file.domain && file.pack !== false) 
@@ -19,7 +20,7 @@ var entry = module.exports = function(opts, modified, total, next) {
         fis.util.write(projectPath(opts.tmp, file.subpath), file.content);
     });
 
-    pack(opts.type, projectPath(opts.tmp), projectPath(opts.to, opts.filename));
+    pack(opts.type, projectPath(opts.tmp), projectPath(opts.to));
     next();
 };
 
@@ -51,9 +52,7 @@ entry.defaultOptions = entry.defaultOpitons = {
 
     type: 'zip', // 压缩类型, 传给archiver
 
-    to: '../pack', // 输出目录
-
-    filename: 'pack.zip', // 压缩包名
+    to: '../pack/pack.zip', // 输出压缩包名
 
     packDomain: true, // 是否打包所有包含domain属性的文件
 

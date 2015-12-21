@@ -32,9 +32,7 @@ entry.defaultOptions = {
 
     type: 'zip', // 压缩类型, 传给archiver
 
-    to: '../pack', // 输出目录
-
-    filename: 'pack.zip', // 压缩包名
+    to: '../pack/pack.zip', // 输出压缩包名
 
     packDomain: true, // 是否打包所有包含domain属性的文件
 
