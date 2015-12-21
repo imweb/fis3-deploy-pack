@@ -1,0 +1,26 @@
+{
+  "name": "fis3-deploy-pack",
+  "version": "0.0.1",
+  "description": "fis3 压缩打包",
+  "keywords": [
+    "fis",
+    "fis3",
+    "fis3-deploy"
+  ],
+  "main": "index.js",
+  "author": {
+    "name": "fishineyuan"
+  },
+  "license": "BSD",
+  "homepage": "https://github.com/feix760/fis3-deploy-pack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/feix760/fis3-deploy-pack"
+  },
+  "bugs": {
+    "url": "https://github.com/feix760/fis3-deploy-pack/issues"
+  },
+  "dependencies": {
+    "archiver": "^0.20.0"
+  }
+}
