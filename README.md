@@ -19,6 +19,9 @@ fis.match('/usedomain/(*)', {
     })
     .match('*', {
         deploy: [
+            fis.plugin('local-deliver', {
+                // ...
+            }),
             fis.plugin('pack')
         ]
     });

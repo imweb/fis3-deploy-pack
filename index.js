@@ -3,10 +3,11 @@
 var path = require('path'),
     fs = require('fs'),
     rimraf = require('rimraf'),
-    archiver = require('archiver'); 
+    archiver = require('archiver'),
+    noop = new Function(); 
 
 var entry = module.exports = function(opts, modified, total, next) {
-    rimraf.sync(projectPath(opts.tmp));
+    clean(opts);
 
     total.filter(function(file) {
         return (opts.packDomain && file.domain && file.pack !== false) 
@@ -20,15 +21,24 @@ var entry = module.exports = function(opts, modified, total, next) {
         fis.util.write(projectPath(opts.tmp, file.subpath), file.content);
     });
 
-    pack(opts.type, projectPath(opts.tmp), projectPath(opts.to));
     next();
+
+    // TODO 使用增量打包，放到next()之前
+    // 生成zip文件应该在所有文件写入tmp文件夹之后
+    pack(opts.type, projectPath(opts.tmp), projectPath(opts.to));
 };
 
 function projectPath() {
     return fis.project.getProjectPath(fis.util.apply(fis.util, arguments));
 }
 
-function pack(type, dir, output) {
+var clean = function(opts) {
+    rimraf.sync(projectPath(opts.tmp));
+    rimraf.sync(projectPath(opts.to));
+    clean = noop;
+};
+
+var pack = function(type, dir, output) {
     var archive = archiver(type)
         .bulk([{
             expand: true,
@@ -42,12 +52,12 @@ function pack(type, dir, output) {
     fis.util.mkdir(path.dirname(output));
     archive.pipe(fs.createWriteStream(output));
     archive.finalize();
-}
 
-/**
- * defaultOpitons for fix fis missspell bug
- */
-entry.defaultOptions = entry.defaultOpitons = {
+    // TODO 增量打包时remove
+    pack = noop;
+};
+
+entry.options = {
     tmp: '../.pack-tmp', // 临时文件夹
 
     type: 'zip', // 压缩类型, 传给archiver
@@ -60,7 +70,7 @@ entry.defaultOptions = entry.defaultOpitons = {
     subpath: function(file) {
         return typeof file.pack === 'string' ? file.pack : fis.util(
             (file.domain || '').replace(/^http:\/\//i, ''), 
-            file.release || file.subpath
+            file.getHashRelease()
         );
     },
 
