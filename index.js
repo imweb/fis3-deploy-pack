@@ -53,6 +53,8 @@ var pack = function(type, dir, output) {
     archive.pipe(fs.createWriteStream(output));
     archive.finalize();
 
+    rimraf.sync(projectPath(dir));
+
     // TODO 增量打包时remove
     pack = noop;
 };
